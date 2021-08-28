@@ -11,9 +11,11 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract KronToken is ERC20, ERC20Burnable, AccessControl {
 
     address private owner;
-    uint256 private _totalSupply        = 420000000000000000000000000;
+    uint256 private _totalSupply        = 840000000000000000000000000000; // 840 BILLION Kron, 420 BILLION Kron to be minted to ShibaSwap contract by the dev wallet
     uint private _rewardsFactor;
     address private _rewardsAddress;
+
+    uint256 private _antiWhaleLimit     = 840000000000000000000000000;  // 840 MILLION KRON, Hard cap on transfer quantity (0.01% of Total Supply)
 
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -58,6 +60,8 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
     
     function transfer(address _to, uint256 _value) public virtual override returns (bool) {
 
+        require(_value < _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
+
         address _from = msg.sender;
         address human = ensureOneHuman(_from, _to);
         ensureOneTxPerBlock(human);
@@ -85,6 +89,8 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
 
     function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool) {
 
+        require(_value < _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
+        
         address human = ensureOneHuman(_from, _to);
         ensureOneTxPerBlock(human);
 

@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract XKronToken is ERC20, ERC20Burnable, AccessControl {
     
     address private owner;
-    uint256 private _totalSupply        = 420000000000000000000000000;
+    uint256 private _totalSupply        = 840000000000000000000000000000;
 
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
