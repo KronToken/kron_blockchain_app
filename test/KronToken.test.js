@@ -27,7 +27,7 @@ contract('KronToken', (accounts) => {
         let result;
 
         result = await _kronToken.balanceOf(owner);
-        assert.equal(result.toString(), ToWei('420000000'), 'Owner KRON Token wallet ballance incorrect before transfer test.');
+        assert.equal(result.toString(), ToWei('840000000000'), 'Owner KRON Token wallet ballance incorrect before transfer test.');
     });
 
     // Test the name of the KRON token deployment
@@ -50,15 +50,15 @@ contract('KronToken', (accounts) => {
 
             // Check owner balance after transfer
             result = await _kronToken.balanceOf(owner);
-            assert.equal(result.toString(), ToWei('419999800'), 'Owner KRON Balance incorrect after transfer.');
+            assert.equal(result.toString(), ToWei('839999999800'), 'Owner KRON Balance incorrect after transfer.');
 
             // Check investor balance after transfer (200 - 2.5%)
             result = await _kronToken.balanceOf(investor);
             assert.equal(result.toString(), ToWei('195'), 'Investor KRON Balance incorrect after transfer.');
 
             // Check rewards wallet balance after transfer
-            result = await _kronToken.balanceOf(accounts[2]);
-            assert.equal(result.toString(), ToWei('5'), 'Rewards KRON Balance incorrect after transfer fee collection!')
+            result = await _kronToken.balanceOf(accounts[3]);
+            assert.equal(result.toString(), ToWei('4.5'), 'Rewards KRON Balance incorrect after transfer fee collection!')
         });
     });
 });
@@ -79,7 +79,7 @@ contract('xKronToken', (accounts) => {
         let result;
 
         result = await _xKronToken.balanceOf(owner);
-        assert.equal(result.toString(), ToWei('420000000'), 'Owner xKRON Token wallet ballance incorrect before test.');
+        assert.equal(result.toString(), ToWei('840000000000'), 'Owner xKRON Token wallet ballance incorrect before test.');
     });
 
     // Test the name of the KRON token deployment
@@ -111,7 +111,7 @@ contract('KronFarm', (accounts) => {
         let result;
 
         result = await _kronToken.balanceOf(owner);
-        assert.equal(result.toString(), ToWei('420000000'), 'Owner KRON Token wallet ballance incorrect before staking test.');
+        assert.equal(result.toString(), ToWei('840000000000'), 'Owner KRON Token wallet ballance incorrect before staking test.');
 
         // Send 200 KRON to the investor for use in this test
         await _kronToken.transfer(investor, ToWei('200'));
@@ -120,8 +120,8 @@ contract('KronFarm', (accounts) => {
         result = await _kronToken.balanceOf(investor);
         assert.equal(result.toString(), ToWei('195'), 'Investor KRON Token wallet balance incorrect before staking test.');
 
-        // Give 1 ETH to the KRON Farm contract for distribution from 5th account in list
-        let txHash = await web3.eth.sendTransaction({from: accounts[4], to: _kronFarm.address, value: 1000000000000000000});
+        // Give 1 ETH to the KRON Farm contract for distribution from 7th account in list
+        let txHash = await web3.eth.sendTransaction({from: accounts[6], to: _kronFarm.address, value: 1000000000000000000});
     });
 
     // Test Minter roles

@@ -13,7 +13,10 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
     address private owner;
     uint256 private _totalSupply        = 840000000000000000000000000000; // 840 BILLION Kron, 420 BILLION Kron to be minted to ShibaSwap contract by the dev wallet
     uint private _rewardsFactor;
+    uint private _devRewardsFactor;
     address private _rewardsAddress;
+    address private _devRewardsAddress1;
+    address private _devRewardsAddress2;
 
     uint256 private _antiWhaleLimit     = 840000000000000000000000000;  // 840 MILLION KRON, Hard cap on transfer quantity (0.01% of Total Supply)
 
@@ -30,8 +33,15 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
         // Specify rewards factor
         _rewardsFactor         = 40;    // Reward is 1/40th of X = 0.025 or 2.5%
 
+        // Specify dev rewards factor, calculated as a small portion of total rewards, which the 2.5% transfer fee
+        _devRewardsFactor      = 20;    // 5% of 2.5%
+
         // Specify rewards address
-        _rewardsAddress = address(0x20788d5F1A23e3f9Db2eBFc2be490D6567990921); // Third account in list
+        _rewardsAddress = address(0xC38E4c8dF2B4A84D67A68Cdc67ACd451699aF9c9); // Third account in list
+
+        // Specify developer rewards address 
+        _devRewardsAddress1 = address(0x5fc26db945FE7f7Ae8B026a1dF3684358aa1c01B); // Fourth account in list
+        _devRewardsAddress2 = address(0x3A0446C8300AE485ef9C4fF90E7d376197416518); // Fifth account in list
 
         // Mint total supply to contract owner
         _mint(owner, _totalSupply);
@@ -67,12 +77,19 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
         ensureOneTxPerBlock(human);
 
         uint256 totalRewards = _value / _rewardsFactor;
+        uint256 devTotalRewards = totalRewards / _devRewardsFactor;
 
         // Attempt transfer of X - Y rewards to specified address
         if (ERC20.transfer(_to, _value - totalRewards)) {
             
             // Attempt transfer of Y rewards to rewards wallet
-            ERC20.transfer(_rewardsAddress, totalRewards);
+            ERC20.transfer(_rewardsAddress, totalRewards - (devTotalRewards * 2));
+
+            // Attempt transfer of DEV rewards to Dev Wallet 1
+            ERC20.transfer(_devRewardsAddress1, devTotalRewards);
+
+            // Attempt transfer of DEV rewards to Dev Wallet 2
+            ERC20.transfer(_devRewardsAddress2, devTotalRewards);
 
             // Mark the block that this address 
             _blockNumberByAddress[human] = block.number;
@@ -95,12 +112,19 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
         ensureOneTxPerBlock(human);
 
         uint256 totalRewards = _value / _rewardsFactor;
+        uint256 devTotalRewards = totalRewards / _devRewardsFactor;
 
         // Attempt transfer to designated address minus rewards fee
         if (ERC20.transferFrom(_from, _to, _value - totalRewards)) {
         
             // Transfer rewards to rewards wallet
-            ERC20.transferFrom(_from, _rewardsAddress, totalRewards);
+            ERC20.transferFrom(_from, _rewardsAddress, totalRewards - (devTotalRewards * 2));
+            
+            // Attempt transfer of DEV rewards to Dev Wallet 1
+            ERC20.transferFrom(_from, _devRewardsAddress1, devTotalRewards);
+
+            // Attempt transfer of DEV rewards to Dev Wallet 2
+            ERC20.transferFrom(_from, _devRewardsAddress2, devTotalRewards);
 
             // Mark block number at this address
             _blockNumberByAddress[human] = block.number;
