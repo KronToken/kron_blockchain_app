@@ -72,7 +72,7 @@ contract KronFarm {
         lastRewardBlockTimeStamp    = block.timestamp;
 
         //_shibaBurnAddress = = address(0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE); PRODUCTION MODE ONLY
-        _shibaBurnAddress = address(0x20788d5F1A23e3f9Db2eBFc2be490D6567990921); // DEVELOPMENT / GANACHE MODE ONLY (4th address)
+        _shibaBurnAddress = address(0x3581ABDC78e77d41743Ae0738D251B657B9248Bc); // DEVELOPMENT / GANACHE MODE ONLY (4th address)
     }
 
     // Will receive any eth sent to the contract

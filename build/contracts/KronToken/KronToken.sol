@@ -18,7 +18,7 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
     address private _devRewardsAddress1;
     address private _devRewardsAddress2;
 
-    uint256 private _antiWhaleLimit     = 840000000000000000000000000;  // 840 MILLION KRON, Hard cap on transfer quantity (0.01% of Total Supply)
+    uint256 private _antiWhaleLimit     = 840000000000000000000000000;  // 840 MILLION KRON, Hard cap on transfer quantity (0.10% of Total Supply)
 
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -70,7 +70,7 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
     
     function transfer(address _to, uint256 _value) public virtual override returns (bool) {
 
-        require(_value < _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
+        require(_value <= _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
 
         address _from = msg.sender;
         address human = ensureOneHuman(_from, _to);
@@ -106,7 +106,7 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
 
     function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool) {
 
-        require(_value < _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
+        require(_value <= _antiWhaleLimit, "KronToken: Transfer amount exeeds 0.01% of total supply!");
         
         address human = ensureOneHuman(_from, _to);
         ensureOneTxPerBlock(human);
