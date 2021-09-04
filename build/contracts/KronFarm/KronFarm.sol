@@ -44,9 +44,6 @@ contract KronFarm {
     // Has Staked ? mapping
     mapping(address => bool) public hasStaked;
 
-    // Is Staking ? mapping
-    mapping(address => bool) public isStaking;
-
     // Block Number -> Address Map
     mapping(address => uint256) private _blockNumberByAddress;
 
@@ -63,7 +60,7 @@ contract KronFarm {
         totalStakedTokens           = 0;
         _ethNodeProfit              = 3;                // 66% of KRON Farm Contract's to xKRON holders, 33% to DEV
         _ethNodeProfitRewardProcessingGasBounty = 100;  // 1% of KRON Farm Contract's ETH Balance
-        _ethNodeProfitDripRate      = 10;               //  10% of total profit in this contract's ETH ledger will be processed
+        _ethNodeProfitDripRate      = 4;                // 25% of total profit in this contract's ETH ledger will be processed
 
         _ethRewardThrottle          = 2 hours;        // 0 second reward throttle
         lastRewardBlockTimeStamp    = block.timestamp;
@@ -97,7 +94,7 @@ contract KronFarm {
 
         // Update staking balance
         stakingBalance[msg.sender] = stakingBalance[msg.sender] + _amount;
-        totalStakedTokens += _amount;
+        totalStakedTokens = totalStakedTokens + _amount;
 
         // Add user to stakers array only if they haven't staked already
         if (!hasStaked[msg.sender]) {
@@ -106,7 +103,6 @@ contract KronFarm {
 
         // Update staking status
         hasStaked[msg.sender] = true;
-        isStaking[msg.sender] = true;
                 
         // Transfer KRON Tokens to dev wallet for staking
         kronToken.burnFrom(msg.sender, _amount);
@@ -132,14 +128,13 @@ contract KronFarm {
 
         // Update the staking balance
         stakingBalance[msg.sender] = stakingBalance[msg.sender] - _amount;
-        totalStakedTokens -= _amount;
+        totalStakedTokens = totalStakedTokens - _amount;
 
         // Remove user from stakers array if their balance = 0
         if (hasStaked[msg.sender] && stakingBalance[msg.sender] == 0) {
             
             // Update staking status
             hasStaked[msg.sender] = false;
-            isStaking[msg.sender] = false;
         }
 
         // Burn xKRON from investors wallet
@@ -163,7 +158,7 @@ contract KronFarm {
         // Update our last reward block timestamp state variable
         lastRewardBlockTimeStamp = block.timestamp;
 
-        uint256 totalProfits = address(this).balance / _ethNodeProfitDripRate; // ETH balance of contract
+        uint256 totalProfits = address(this).balance / _ethNodeProfitDripRate; // ETH balance of contract divided by drip rate
 
         uint256 bounty = totalProfits / _ethNodeProfitRewardProcessingGasBounty; // 1% of total profits
         totalProfits -= bounty; // correct the totalProfits variable for further processing
@@ -177,18 +172,12 @@ contract KronFarm {
         for (uint256 i=0; i < stakers.length; i++) {
 
             address recipient = stakers[i];
-            uint256 balance = stakingBalance[recipient];
+            uint256 stakerBalance = stakingBalance[recipient];
 
-            if (balance > 0) {
+            if (stakerBalance > 0) {
 
-                uint256 share = balance / totalStakedTokens;
-
-                if (share > 0) {
-
-                    // Pay the staker their fair share of ETH from the ETH node profits (66%)
-                    uint256 stakerShare = share * thirdProfits;
-                    payable(recipient).transfer(stakerShare * 2);
-                }
+                uint256 payment = ((stakerBalance * thirdProfits) / totalStakedTokens) * 2; // Double it from 33% to 66%
+                payable(recipient).transfer(payment * 2);
             }
         }
 

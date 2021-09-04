@@ -73,13 +73,6 @@ contract('xKronToken', (accounts) => {
     before(async () => {
 
         _xKronToken = await XKronToken.new({from: owner});
-
-        // Transfer 420 million KRON tokens to owner on deployment
-        // Check owner balance before staking
-        let result;
-
-        result = await _xKronToken.balanceOf(owner);
-        assert.equal(result.toString(), ToWei('840000000000'), 'Owner xKRON Token wallet ballance incorrect before test.');
     });
 
     // Test the name of the KRON token deployment
@@ -115,13 +108,15 @@ contract('KronFarm', (accounts) => {
 
         // Send 200 KRON to the investor for use in this test
         await _kronToken.transfer(investor, ToWei('200'));
+        await _kronToken.transfer(accounts[4], ToWei('500'));
+        await _kronToken.transfer(accounts[5], ToWei('10000'));
 
         // Account for 2.5% fee = 200 - 5 = 195
         result = await _kronToken.balanceOf(investor);
         assert.equal(result.toString(), ToWei('195'), 'Investor KRON Token wallet balance incorrect before staking test.');
 
         // Give 1 ETH to the KRON Farm contract for distribution from 7th account in list
-        let txHash = await web3.eth.sendTransaction({from: accounts[8], to: _kronFarm.address, value: 10000000000000000000});
+        let txHash = await web3.eth.sendTransaction({from: accounts[8], to: _kronFarm.address, value: 1000000000000000000});
     });
 
     // Test Minter roles
@@ -165,6 +160,14 @@ contract('KronFarm', (accounts) => {
             // Check Balance of Investor (they should have 0 KRON)
             result = await _kronToken.balanceOf(investor);
             assert.equal(result.toString(), ToWei('0'), "KronFarm Token Balance is incorrect after unstaking!");
+
+            // Stake investor 2
+            await _kronToken.approve(_kronFarm.address, ToWei('200'), {from: accounts[4]});
+            await _kronFarm.stakeTokens(ToWei('200'), {from: accounts[4]});
+
+            // Stake investor 3
+            await _kronToken.approve(_kronFarm.address, ToWei('10000'), {from: accounts[5]});
+            await _kronFarm.stakeTokens(ToWei('9750'), {from: accounts[5]});
         });
     });
 
@@ -175,7 +178,7 @@ contract('KronFarm', (accounts) => {
             let result;
 
             // REWARD DISTRIBUTION - Reward stakers
-            await _kronFarm.issueRewards({ from: accounts[2] });
+            await _kronFarm.issueRewards({ from: accounts[6] });
 
             // Check KRON Farm ETH Balance
             result = await web3.eth.getBalance(_kronFarm.address);
