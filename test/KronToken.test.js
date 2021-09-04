@@ -58,7 +58,7 @@ contract('KronToken', (accounts) => {
 
             // Check rewards wallet balance after transfer
             result = await _kronToken.balanceOf(accounts[2]);
-            assert.equal(result.toString(), ToWei('4.5'), 'Rewards KRON Balance incorrect after transfer fee collection!')
+            assert.equal(result.toString(), ToWei('4'), 'Rewards KRON Balance incorrect after transfer fee collection!')
         });
     });
 });
@@ -121,7 +121,7 @@ contract('KronFarm', (accounts) => {
         assert.equal(result.toString(), ToWei('195'), 'Investor KRON Token wallet balance incorrect before staking test.');
 
         // Give 1 ETH to the KRON Farm contract for distribution from 7th account in list
-        let txHash = await web3.eth.sendTransaction({from: accounts[8], to: _kronFarm.address, value: 1000000000000000000});
+        let txHash = await web3.eth.sendTransaction({from: accounts[8], to: _kronFarm.address, value: 10000000000000000000});
     });
 
     // Test Minter roles

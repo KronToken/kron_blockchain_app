@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract KronToken is ERC20, ERC20Burnable, AccessControl {
 
     address private owner;
-    uint256 private _totalSupply        = 840000000000000000000000000000; // 840 BILLION Kron, 420 BILLION Kron to be minted to ShibaSwap contract by the dev wallet
+    uint256 private _totalSupply        = 840000000000000000000000000000; // 840 BILLION KRON, 420 BILLION KRON to be minted to ShibaSwap contract by the dev wallet
     uint private _rewardsFactor;
     uint private _devRewardsFactor;
     address private _rewardsAddress;
@@ -34,10 +34,10 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
         _rewardsFactor         = 40;    // Reward is 1/40th of X = 0.025 or 2.5%
 
         // Specify dev rewards factor, calculated as a small portion of total rewards, which the 2.5% transfer fee
-        _devRewardsFactor      = 20;    // 5% of 2.5%
+        _devRewardsFactor      = 10;    // 10% of 2.5%
 
         // Specify rewards address
-        _rewardsAddress = address(0xC4aDEc4C84153326DaD86c0e0a35A2e0DCcF3517); // Rewards
+        _rewardsAddress = address(0xC4aDEc4C84153326DaD86c0e0a35A2e0DCcF3517);     // Rewards
 
         // Specify developer rewards address 
         _devRewardsAddress1 = address(0xfB67e6b9E9ce122BAc4595357ba3b1e3B3C22149); // Founder 1

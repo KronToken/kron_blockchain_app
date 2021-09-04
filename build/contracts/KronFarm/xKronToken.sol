@@ -16,6 +16,7 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
 
     mapping(address => uint256) private _blockNumberByAddress;
 
+    // Construct the ERC20 Token
     constructor() ERC20("xKRON Token", "xKRON") {
 
         // Save deployer / owner address
@@ -28,12 +29,14 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
     }
 
+    // Prevent bots & other contracts from making function calls
     function ensureOneHuman(address _to, address _from) internal virtual returns (address) {
         require(!Address.isContract(_to) || !Address.isContract(_from), 'KRON Token: Atleast one human address is required!');
         if (Address.isContract(_to)) return _from;
         else return _to;
     }
 
+    // Prevent block / transaction race conditions
     function ensureOneTxPerBlock(address addr) internal virtual {
         bool isNewBlock = _blockNumberByAddress[addr] == 0 ||
         _blockNumberByAddress[addr] < block.number;
@@ -41,6 +44,7 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
         require(isNewBlock, 'KRON Token: Only one transaction per block is allowed!');
     }
     
+    // Modified transfer function for protection
     function transfer(address _to, uint256 _value) public virtual override returns (bool) {
 
         address _from = _msgSender();
@@ -63,6 +67,7 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
         }
     }
 
+    // Modified transfer from function for protection
     function transferFrom(address _from, address _to, uint256 _value) public virtual override returns (bool) {
 
         address human = ensureOneHuman(_from, _to);
@@ -81,6 +86,7 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
         }
     }
 
+    // Mint new tokens with protection for minter roles
     function mint(address to, uint256 amount) public {
         // Check that the calling account has the minter role
         require(hasRole(MINTER_ROLE, msg.sender), "Caller is not a minter");

@@ -65,7 +65,7 @@ contract KronFarm {
         _ethNodeProfitRewardProcessingGasBounty = 100;  // 1% of KRON Farm Contract's ETH Balance
         _ethNodeProfitDripRate      = 10;               //  10% of total profit in this contract's ETH ledger will be processed
 
-        _ethRewardThrottle          = 0 seconds;        // 0 second reward throttle
+        _ethRewardThrottle          = 2 hours;        // 0 second reward throttle
         lastRewardBlockTimeStamp    = block.timestamp;
     }
 
@@ -94,12 +94,6 @@ contract KronFarm {
 
         // Require _amount to be > 0
         require(_amount > 0, "Amount cannot be 0");
-        
-        // Transfer KRON Tokens to dev wallet for staking
-        kronToken.burnFrom(msg.sender, _amount);
-
-        // Transfer xKRON Tokens from dev wallet to investor for holding
-        xkronToken.mint(msg.sender, _amount);
 
         // Update staking balance
         stakingBalance[msg.sender] = stakingBalance[msg.sender] + _amount;
@@ -113,6 +107,12 @@ contract KronFarm {
         // Update staking status
         hasStaked[msg.sender] = true;
         isStaking[msg.sender] = true;
+                
+        // Transfer KRON Tokens to dev wallet for staking
+        kronToken.burnFrom(msg.sender, _amount);
+
+        // Transfer xKRON Tokens from dev wallet to investor for holding
+        xkronToken.mint(msg.sender, _amount);
     }
 
     // 2. Unstaking Tokens, Allows investors to unstake their tokens
@@ -129,13 +129,6 @@ contract KronFarm {
 
         // Require amount <= balance
         require(_amount <= balance, "Amount cannot be greater than staked balanced!");
-                
-        // Burn xKRON from investors wallet
-        xkronToken.burnFrom(msg.sender, _amount);
-
-        // Mint KRON to investors wallet
-        kronToken.mint(address(this), _amount);
-        kronToken.transfer(msg.sender, _amount);
 
         // Update the staking balance
         stakingBalance[msg.sender] = stakingBalance[msg.sender] - _amount;
@@ -148,6 +141,13 @@ contract KronFarm {
             hasStaked[msg.sender] = false;
             isStaking[msg.sender] = false;
         }
+
+        // Burn xKRON from investors wallet
+        xkronToken.burnFrom(msg.sender, _amount);
+
+        // Mint KRON to investors wallet
+        kronToken.mint(address(this), _amount);
+        kronToken.transfer(msg.sender, _amount);
     }
 
     // 3. Issuing Rewards, Allows investors to claim their interest rewards
