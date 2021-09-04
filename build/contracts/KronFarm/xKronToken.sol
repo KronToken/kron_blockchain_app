@@ -22,9 +22,6 @@ contract XKronToken is ERC20, ERC20Burnable, AccessControl {
         // Save deployer / owner address
         owner = msg.sender;
 
-        // Mint total supply to contract owner
-        _mint(owner, _totalSupply);
-
         // Grant the admin role to a specified account (contract deployer)
         _setupRole(DEFAULT_ADMIN_ROLE, owner);
     }
