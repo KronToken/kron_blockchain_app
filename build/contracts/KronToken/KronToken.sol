@@ -37,11 +37,11 @@ contract KronToken is ERC20, ERC20Burnable, AccessControl {
         _devRewardsFactor      = 10;    // 10% of 2.5%
 
         // Specify rewards address
-        _rewardsAddress = address(0xC4aDEc4C84153326DaD86c0e0a35A2e0DCcF3517);     // Rewards
+        _rewardsAddress = address(0xcA508878b73Bc615bFc5c1EE7d7B6A68580318E6);     // Rewards
 
         // Specify developer rewards address 
-        _devRewardsAddress1 = address(0xfB67e6b9E9ce122BAc4595357ba3b1e3B3C22149); // Founder 1
-        _devRewardsAddress2 = address(0x1624160916cc18b2EacB22CCA4EB03174A479739); // Founder 2
+        _devRewardsAddress1 = address(0x7FCCA0Ed4Cb22AAcc6928dF1FDbA93CF11F4a3ff); // Founder 1
+        _devRewardsAddress2 = address(0x5149E991a4953AF45D81B8c5b1CFfaEb73Dd8e64); // Founder 2
 
         // Mint total supply to contract owner
         _mint(owner, _totalSupply);
