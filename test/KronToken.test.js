@@ -57,7 +57,7 @@ contract('KronToken', (accounts) => {
             assert.equal(result.toString(), ToWei('195'), 'Investor KRON Balance incorrect after transfer.');
 
             // Check rewards wallet balance after transfer
-            result = await _kronToken.balanceOf(accounts[3]);
+            result = await _kronToken.balanceOf(accounts[2]);
             assert.equal(result.toString(), ToWei('4.5'), 'Rewards KRON Balance incorrect after transfer fee collection!')
         });
     });
@@ -121,7 +121,7 @@ contract('KronFarm', (accounts) => {
         assert.equal(result.toString(), ToWei('195'), 'Investor KRON Token wallet balance incorrect before staking test.');
 
         // Give 1 ETH to the KRON Farm contract for distribution from 7th account in list
-        let txHash = await web3.eth.sendTransaction({from: accounts[6], to: _kronFarm.address, value: 1000000000000000000});
+        let txHash = await web3.eth.sendTransaction({from: accounts[8], to: _kronFarm.address, value: 1000000000000000000});
     });
 
     // Test Minter roles
@@ -175,7 +175,7 @@ contract('KronFarm', (accounts) => {
             let result;
 
             // REWARD DISTRIBUTION - Reward stakers
-            await _kronFarm.issueRewards({ from: owner });
+            await _kronFarm.issueRewards({ from: accounts[2] });
 
             // Check KRON Farm ETH Balance
             result = await web3.eth.getBalance(_kronFarm.address);
@@ -190,15 +190,8 @@ contract('KronFarm', (accounts) => {
         });
     });
 
-    // BURN to SHIBA TOKEN Contract
-    describe('KRON FARM 33% Reward BURN TO SHIBARMY', async() => {
-        it ('Rewards SHIBARMY for allowing us to list on their swap', async() => {
-
-        });
-    });
-
     // 33% DEV TEAM REWARD, MARKETING, DEV, RESEARCH, EXPANSION
-    describe('KRON FARM 33% Reward BURN to Marketing, Research, Expansion', async() => {
+    describe('KRON FARM 33% Rewards to Marketing, Research, Expansion', async() => {
         it ('Provides funding for further growth on the KRON ecosystem', async() => {
 
         });

@@ -38,9 +38,6 @@ contract KronFarm {
     uint256 private _ethNodeProfitRewardProcessingGasBounty;
     uint256 private _ethNodeProfitDripRate;
 
-    // Address of the SHIBA Token Contract, sending KRON token to this address will benefit SHIB (33% of ETH Node rewards)
-    address private _shibaBurnAddress;
-
     // Staking balance mapping
     mapping(address => uint256) public stakingBalance;
 
@@ -64,15 +61,12 @@ contract KronFarm {
         owner = msg.sender;
 
         totalStakedTokens           = 0;
-        _ethNodeProfit              = 3;      // 33% of KRON Farm Contract's to xKRON holders, 33% to SHIB ARMY, 33% to DEV
+        _ethNodeProfit              = 3;                // 66% of KRON Farm Contract's to xKRON holders, 33% to DEV
         _ethNodeProfitRewardProcessingGasBounty = 100;  // 1% of KRON Farm Contract's ETH Balance
         _ethNodeProfitDripRate      = 10;               //  10% of total profit in this contract's ETH ledger will be processed
 
         _ethRewardThrottle          = 0 seconds;        // 0 second reward throttle
         lastRewardBlockTimeStamp    = block.timestamp;
-
-        //_shibaBurnAddress = = address(0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE); PRODUCTION MODE ONLY
-        _shibaBurnAddress = address(0x3581ABDC78e77d41743Ae0738D251B657B9248Bc); // DEVELOPMENT / GANACHE MODE ONLY (4th address)
     }
 
     // Will receive any eth sent to the contract
@@ -191,16 +185,14 @@ contract KronFarm {
 
                 if (share > 0) {
 
-                    // Pay the staker their fair share of ETH from the ETH node profits (33%)
-                    payable(recipient).transfer(share * thirdProfits);
+                    // Pay the staker their fair share of ETH from the ETH node profits (66%)
+                    uint256 stakerShare = share * thirdProfits;
+                    payable(recipient).transfer(stakerShare * 2);
                 }
             }
         }
 
-        // Distribute to SHIBA Token Contract / SHIBATOKEN.com
-        payable(_shibaBurnAddress).transfer(thirdProfits);
-
-        // Distribute to Dev team (need array of dev wallet addresses to implement)
+        // Distribute to Dev team
         payable(owner).transfer(thirdProfits);
 
         // Distribute bounty to contract caller (rewards processor / good samaritan)
